@@ -1,0 +1,11 @@
+<?php echo '<?php' ?>
+
+\Magento\Framework\Component\ComponentRegistrar::register(
+
+\Magento\Framework\Component\ComponentRegistrar::MODULE,
+
+'<?php echo $this->getData('vendor') ?>_<?php echo $this->getData('module') ?>',
+
+__DIR__
+
+);
