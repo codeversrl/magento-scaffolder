@@ -39,9 +39,7 @@ class ScaffolderModuleHelper extends AbstractHelper
     private $dir;
     private $moduleName;
     private $vendorName;
-    private $input;
-    private $output;
-    private $shellStyle;
+    private $shell;
     private $fileHelper;
 
     public function __construct(
@@ -51,16 +49,15 @@ class ScaffolderModuleHelper extends AbstractHelper
     ) {
         $this->moduleName = '';
         $this->vendorName = '';
-        $this->shellStyle = null;
+        $this->shell = null;
         $this->dir = $dir;
         $this->fileHelper = $fileHelper;
         parent::__construct($context);
     }
 
-    public function startCommand(InputInterface $input, OutputInterface $output)
+    public function startCommand(SymfonyStyle $shell)
     {
-        $this->input = $input;
-        $this->output = $output;
+        $this->shell = $shell;
         if ($this->validate()) {
             $this->doJob();
         }
@@ -68,50 +65,43 @@ class ScaffolderModuleHelper extends AbstractHelper
 
     protected function validate()
     {
-        $helper = new QuestionHelper();
-        $question = new Question('Your module Vendor name:', '');
-        $vendorName = $helper->ask($this->input, $this->output, $question);
+        $vendorName = $this->shell->ask('Your module Vendor name:', '');
         $vendorName = preg_replace("/[^A-Za-z]+/", "", $vendorName);
         if (empty($vendorName)) {
-            $this->output->writeln('Cannot create a vendor with empty name');
+            $this->shell->warning('Cannot create a vendor with empty name');
             return false;
         }
         $this->vendorName = ucfirst(strtolower($vendorName));
         $question = new Question('Your new Module name:', '');
-        $moduleName = $helper->ask($this->input, $this->output, $question);
+        $moduleName = $this->shell->ask('Your new Module name:', '');
         $moduleName = preg_replace("/[^A-Za-z]+/", "", $moduleName);
         if (empty($moduleName)) {
-            $this->output->writeln('Cannot create a new module with empty name');
+            $this->shell->warning('Cannot create a new module with empty name');
             return false;
         }
         $this->moduleName = ucfirst(strtolower($moduleName));
         $res = $this->getStatus();
-        $this->output->writeln($res);
-        $question = new ConfirmationQuestion('Do you wish to continue?', true);
-        if (!$helper->ask($this->input, $this->output, $question)) {
-            $this->output->writeln('Exiting without creating module...');
+        $this->shell->table($res['header'], $res['body']);
+
+        if (!$this->shell->confirm('Do you wish to continue?', 'Y')) {
+            $this->shell->warning('Exiting without creating module...');
             return false;
         }
-        $this->output->writeln('Creating module...');
+        $this->shell->text('Creating module...');
         return true;
     }
 
     protected function getStatus()
     {
         $moduleFinalPath = $this->getModuleBasepath() . DIRECTORY_SEPARATOR . $this->vendorName.'_'.$this->moduleName;
-        $str = <<<EOD
-
-
-======================================
-Review your data:
-======================================
-vendor: $this->vendorName
-module: $this->moduleName
-path: $moduleFinalPath
---------------------------------------
-
-EOD;
-        return $str;
+        return array(
+            "header" => ['Your data', ''],
+            "body" => [
+                ['vendor', $this->vendorName],
+                ['module', $this->moduleName],
+                ['path', $moduleFinalPath],
+            ]
+        );
     }
 
     protected function doJob()
@@ -126,16 +116,16 @@ EOD;
         $moduleBasepath = $this->getModuleBasepath();
         if (file_exists($moduleBasepath)) {
             if (!is_readable($moduleBasepath)) {
-                $this->output->writeln("the directory $moduleBasepath already exists and is not readable.");
+                $this->shell->warning("the directory $moduleBasepath already exists and is not readable.");
                 return false;
             }
             $di = new \RecursiveDirectoryIterator($moduleBasepath, \FilesystemIterator::SKIP_DOTS);
             if (iterator_count($di) !== 0) {
-                $this->output->writeln("the directory $moduleBasepath already exists and is not empty.");
+                $this->shell->warning("the directory $moduleBasepath already exists and is not empty.");
                 return false;
             }
             if (!is_writable($moduleBasepath)) {
-                $this->output->writeln("the directory $moduleBasepath already exists and is not writable.");
+                $this->shell->warning("the directory $moduleBasepath already exists and is not writable.");
                 return false;
             }
         }
@@ -144,10 +134,7 @@ EOD;
 
     protected function generateModuleDirectoriesAndFiles()
     {
-
-
-        $this->shellStyle = new SymfonyStyle($this->input, $this->output);
-        $this->shellStyle->progressStart(100);
+        $this->shell->progressStart(100);
         $this->generateModuleDirectory(null);
         $this->generateModuleDirectory(self::DIRECTORY_API);
         $this->generateModuleDirectory(self::DIRECTORY_BLOCK);
@@ -168,7 +155,7 @@ EOD;
         $this->generateModuleFile(self::FILE_README);
         $this->generateModuleFile(self::FILE_REGISTRATION);
         $this->generateModuleFile(self::FILE_MODULE, self::DIRECTORY_ETC);
-        $this->shellStyle->progressFinish();
+        $this->shell->progressFinish();
     }
 
     protected function generateModuleDirectory(string $dirname = null)
@@ -180,8 +167,8 @@ EOD;
         if (!file_exists($path)) {
             mkdir($path, 0755, true);
         }
-        if ($this->shellStyle) {
-            $this->shellStyle->progressAdvance();
+        if ($this->shell) {
+            $this->shell->progressAdvance();
             $this->msleep(0.5);
         }
     }
@@ -193,8 +180,8 @@ EOD;
         $data = $this->prepareContent();
         $output = $this->fileHelper->render($template, $data);
         $this->fileHelper->write($this->getDestinationFilePath($filename, $dirname), $output);
-        if ($this->shellStyle) {
-            $this->shellStyle->progressAdvance();
+        if ($this->shell) {
+            $this->shell->progressAdvance();
             $this->msleep(0.5);
         }
     }

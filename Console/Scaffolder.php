@@ -8,6 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Codever\Scaffolder\Helper\ScaffolderModuleHelper;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Scaffolder extends Command
 {
@@ -15,11 +16,14 @@ class Scaffolder extends Command
     const TYPE_MODULE = "module";
 
     private $scaffolderHelper;
+    private $shell;
 
-    public function __construct(\Codever\Scaffolder\Helper\ScaffolderModuleHelper $scaffolderHelper, string $name = null)
+    public function __construct(
+        ScaffolderModuleHelper $scaffolderHelper
+        )
     {
         $this->scaffolderHelper = $scaffolderHelper;
-        parent::__construct($name);
+        parent::__construct();
     }
 
     protected function configure()
@@ -35,19 +39,21 @@ class Scaffolder extends Command
             ]);
             parent::configure();
     }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->shell = new SymfonyStyle($input, $output);
         $scaffolderType = $input->getArgument(self::ARGUMENT_TYPE);
         if (empty($scaffolderType)) {
             $scaffolderType = self::TYPE_MODULE;
-            $output->writeln("no scaffolder type provided, I will assume it is \"module\"");
+            $this->shell->warning("no scaffolder type provided, I will assume it is \"module\"");
         }
         switch ($scaffolderType) {
             case self::TYPE_MODULE:
-                $this->scaffolderHelper->startCommand($input, $output);
+                $this->scaffolderHelper->startCommand($this->shell);
                 break;
             default:
-                $output->writeln('Only "module" scaffolder is currently supported');
+                $this->shell->warning('Only "module" scaffolder is currently supported');
                 break;
         }
     }

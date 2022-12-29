@@ -8,4 +8,18 @@
             </argument>
         </arguments>
     </type>
+    <type name="Codever\Scaffolder\Console\Scaffolder">
+        <arguments>
+            <argument name="scaffolderHelper" xsi:type="object">Codever\Scaffolder\Helper\ScaffolderModuleHelper</argument>
+            <!--<argument name="shellStyle" xsi:type="object">Symfony\Component\Console\Style\SymfonyStyle</argument>-->
+        </arguments>
+    </type>
+    <type name="Codever\Scaffolder\Helper\ScaffolderModuleHelper">
+        <arguments>
+            <argument name="context" xsi:type="object">Magento\Framework\App\Helper\Context</argument>
+            <argument name="dir" xsi:type="object">Magento\Framework\Filesystem\DirectoryList</argument>
+            <argument name="fileHelper" xsi:type="object">Codever\Scaffolder\Helper\ScaffolderFileHelper</argument>
+        </arguments>
+    </type>
+
 </config>
