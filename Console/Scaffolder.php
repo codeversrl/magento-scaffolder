@@ -14,46 +14,38 @@ class Scaffolder extends Command
 {
     const ARGUMENT_TYPE = "type";
     const TYPE_MODULE = "module";
+    const TYPE_THEME = "theme";
 
     private $scaffolderHelper;
     private $shell;
 
     public function __construct(
-        ScaffolderModuleHelper $scaffolderHelper
+        ScaffolderModuleHelper $scaffolderHelper,
+        string $name = null
         )
     {
         $this->scaffolderHelper = $scaffolderHelper;
-        parent::__construct();
+        parent::__construct($name);
     }
 
     protected function configure()
     {
             $this->setName('codever:scaffolder');
             $this->setDescription('Command line Scaffolder for Magento 2 modules');
-            $this->setDefinition([
-            new InputArgument(
-                self::ARGUMENT_TYPE,
-                InputArgument::OPTIONAL,
-                "Resource type"
-            )
-            ]);
+            $this->setDefinition([]);
             parent::configure();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->shell = new SymfonyStyle($input, $output);
-        $scaffolderType = $input->getArgument(self::ARGUMENT_TYPE);
-        if (empty($scaffolderType)) {
-            $scaffolderType = self::TYPE_MODULE;
-            $this->shell->warning("no scaffolder type provided, I will assume it is \"module\"");
-        }
+        $scaffolderType = $this->shell->choice('Select what do you want to generate', [self::TYPE_MODULE, self::TYPE_THEME], self::TYPE_MODULE);
         switch ($scaffolderType) {
             case self::TYPE_MODULE:
                 $this->scaffolderHelper->startCommand($this->shell);
                 break;
-            default:
-                $this->shell->warning('Only "module" scaffolder is currently supported');
+            case self::TYPE_THEME:
+                $this->shell->warning("theme scaffolder isn't available yet, sorry");
                 break;
         }
     }

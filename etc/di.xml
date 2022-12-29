@@ -11,7 +11,7 @@
     <type name="Codever\Scaffolder\Console\Scaffolder">
         <arguments>
             <argument name="scaffolderHelper" xsi:type="object">Codever\Scaffolder\Helper\ScaffolderModuleHelper</argument>
-            <!--<argument name="shellStyle" xsi:type="object">Symfony\Component\Console\Style\SymfonyStyle</argument>-->
+            <!--<argument name="name" xsi:type="string"></argument>-->
         </arguments>
     </type>
     <type name="Codever\Scaffolder\Helper\ScaffolderModuleHelper">
