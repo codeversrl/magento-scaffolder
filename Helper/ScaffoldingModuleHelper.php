@@ -12,7 +12,8 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Magento\Framework\App\Helper\Context;
 
-class ScaffolderModuleHelper extends AbstractHelper {
+class ScaffolderModuleHelper extends AbstractHelper
+{
 
     const DIRECTORY_API = 'Api';
     const DIRECTORY_BLOCK = 'Block';
@@ -47,29 +48,31 @@ class ScaffolderModuleHelper extends AbstractHelper {
         Context $context,
         \Magento\Framework\Filesystem\DirectoryList $dir,
         ScaffolderFileHelper $fileHelper
-        ){
+    ) {
         $this->moduleName = '';
         $this->vendorName = '';
-        $this->shellStyle = NULL;
+        $this->shellStyle = null;
         $this->dir = $dir;
         $this->fileHelper = $fileHelper;
         parent::__construct($context);
     }
 
-    public function startCommand(InputInterface $input, OutputInterface $output){
+    public function startCommand(InputInterface $input, OutputInterface $output)
+    {
         $this->input = $input;
         $this->output = $output;
-        if($this->validate()){
+        if ($this->validate()) {
             $this->doJob();
         }
     }
 
-    protected function validate(){
+    protected function validate()
+    {
         $helper = new QuestionHelper();
         $question = new Question('Your module Vendor name:', '');
         $vendorName = $helper->ask($this->input, $this->output, $question);
         $vendorName = preg_replace("/[^A-Za-z]+/", "", $vendorName);
-        if(empty($vendorName)){
+        if (empty($vendorName)) {
             $this->output->writeln('Cannot create a vendor with empty name');
             return false;
         }
@@ -77,7 +80,7 @@ class ScaffolderModuleHelper extends AbstractHelper {
         $question = new Question('Your new Module name:', '');
         $moduleName = $helper->ask($this->input, $this->output, $question);
         $moduleName = preg_replace("/[^A-Za-z]+/", "", $moduleName);
-        if(empty($moduleName)){
+        if (empty($moduleName)) {
             $this->output->writeln('Cannot create a new module with empty name');
             return false;
         }
@@ -93,7 +96,8 @@ class ScaffolderModuleHelper extends AbstractHelper {
         return true;
     }
 
-    protected function getStatus(){
+    protected function getStatus()
+    {
         $moduleFinalPath = $this->getModuleBasepath() . DIRECTORY_SEPARATOR . $this->vendorName.'_'.$this->moduleName;
         $str = <<<EOD
 
@@ -110,26 +114,27 @@ EOD;
         return $str;
     }
 
-    protected function doJob(){
-        if($this->checkBeforeGeneratingModule()){
+    protected function doJob()
+    {
+        if ($this->checkBeforeGeneratingModule()) {
             $this->generateModuleDirectoriesAndFiles();
         }
-
     }
 
-    protected function checkBeforeGeneratingModule(){
+    protected function checkBeforeGeneratingModule()
+    {
         $moduleBasepath = $this->getModuleBasepath();
         if (file_exists($moduleBasepath)) {
-            if(!is_readable($moduleBasepath)){
+            if (!is_readable($moduleBasepath)) {
                 $this->output->writeln("the directory $moduleBasepath already exists and is not readable.");
                 return false;
             }
             $di = new \RecursiveDirectoryIterator($moduleBasepath, \FilesystemIterator::SKIP_DOTS);
-            if(iterator_count($di) !== 0){
+            if (iterator_count($di) !== 0) {
                 $this->output->writeln("the directory $moduleBasepath already exists and is not empty.");
                 return false;
             }
-            if(!is_writable($moduleBasepath)){
+            if (!is_writable($moduleBasepath)) {
                 $this->output->writeln("the directory $moduleBasepath already exists and is not writable.");
                 return false;
             }
@@ -137,12 +142,13 @@ EOD;
         return true;
     }
 
-    protected function generateModuleDirectoriesAndFiles() {
+    protected function generateModuleDirectoriesAndFiles()
+    {
 
 
         $this->shellStyle = new SymfonyStyle($this->input, $this->output);
         $this->shellStyle->progressStart(100);
-        $this->generateModuleDirectory(NULL);
+        $this->generateModuleDirectory(null);
         $this->generateModuleDirectory(self::DIRECTORY_API);
         $this->generateModuleDirectory(self::DIRECTORY_BLOCK);
         $this->generateModuleDirectory(self::DIRECTORY_CONTROLLER);
@@ -165,33 +171,36 @@ EOD;
         $this->shellStyle->progressFinish();
     }
 
-    protected function generateModuleDirectory(string $dirname = null){
+    protected function generateModuleDirectory(string $dirname = null)
+    {
         $path = $this->getModuleBasepath();
-        if($dirname) {
+        if ($dirname) {
             $path .= DIRECTORY_SEPARATOR . $dirname;
         }
         if (!file_exists($path)) {
             mkdir($path, 0755, true);
         }
-        if($this->shellStyle){
+        if ($this->shellStyle) {
             $this->shellStyle->progressAdvance();
             $this->msleep(0.5);
         }
     }
 
-    protected function generateModuleFile(string $filename, string $dirname = NULL, string $templateExtension = '.phtml') {
+    protected function generateModuleFile(string $filename, string $dirname = null, string $templateExtension = '.phtml')
+    {
         $templateFile = $filename.$templateExtension;
         $template = $this->getTemplatePath($templateFile, $dirname);
         $data = $this->prepareContent();
         $output = $this->fileHelper->render($template, $data);
         $this->fileHelper->write($this->getDestinationFilePath($filename, $dirname), $output);
-        if($this->shellStyle){
+        if ($this->shellStyle) {
             $this->shellStyle->progressAdvance();
             $this->msleep(0.5);
         }
     }
 
-    protected function getModuleBasepath() :string {
+    protected function getModuleBasepath() :string
+    {
         $subPaths = [
             $this->dir->getPath('app'),
             'code',
@@ -202,7 +211,8 @@ EOD;
         return $moduleBasepath;
     }
 
-    protected function getTemplatePath(string $filename, string $dirname = NULL) :string {
+    protected function getTemplatePath(string $filename, string $dirname = null) :string
+    {
         $subPaths = [
             $this->dir->getPath('app'),
             'code',
@@ -212,29 +222,32 @@ EOD;
         ];
         $moduleBasepath = implode(DIRECTORY_SEPARATOR, $subPaths);
         $templateFile = $moduleBasepath;
-        if($dirname){
+        if ($dirname) {
             $templateFile .=  DIRECTORY_SEPARATOR . $dirname;
         }
         $templateFile .= DIRECTORY_SEPARATOR . $filename;
         return $templateFile;
     }
 
-    protected function getDestinationFilePath(string $filename, string $dirname = NULL) :string {
+    protected function getDestinationFilePath(string $filename, string $dirname = null) :string
+    {
         $path = $this->getModuleBasepath();
         $destinationFile = $path;
-        if($dirname){
+        if ($dirname) {
             $destinationFile .=  DIRECTORY_SEPARATOR . $dirname;
         }
         $destinationFile .= DIRECTORY_SEPARATOR . $filename;
         return $destinationFile;
     }
 
-    protected function msleep($time) {
+    protected function msleep($time)
+    {
         usleep((int)($time * 1000000));
     }
 
-    protected function prepareContent(string $template = NULL){
-        $data = array();
+    protected function prepareContent(string $template = null)
+    {
+        $data = [];
         $data['vendor'] = $this->vendorName;
         $data['module'] = $this->moduleName;
         return $data;

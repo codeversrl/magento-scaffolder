@@ -16,7 +16,8 @@ class Scaffolder extends Command
 
     private $scaffolderHelper;
 
-    public function __construct(\Codever\Scaffolder\Helper\ScaffolderModuleHelper $scaffolderHelper, string $name = null){
+    public function __construct(\Codever\Scaffolder\Helper\ScaffolderModuleHelper $scaffolderHelper, string $name = null)
+    {
         $this->scaffolderHelper = $scaffolderHelper;
         parent::__construct($name);
     }
@@ -27,25 +28,27 @@ class Scaffolder extends Command
             $this->setDescription('Command line Scaffolder for Magento 2 modules');
             $this->setDefinition([
             new InputArgument(
-                self::ARGUMENT_TYPE, InputArgument::OPTIONAL, "Resource type")
+                self::ARGUMENT_TYPE,
+                InputArgument::OPTIONAL,
+                "Resource type"
+            )
             ]);
             parent::configure();
     }
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $scaffolderType = $input->getArgument(self::ARGUMENT_TYPE);
-        if(empty($scaffolderType)){
+        if (empty($scaffolderType)) {
             $scaffolderType = self::TYPE_MODULE;
             $output->writeln("no scaffolder type provided, I will assume it is \"module\"");
         }
-        switch($scaffolderType){
+        switch ($scaffolderType) {
             case self::TYPE_MODULE:
                 $this->scaffolderHelper->startCommand($input, $output);
-            break;
+                break;
             default:
                 $output->writeln('Only "module" scaffolder is currently supported');
-            break;
+                break;
         }
-
     }
 }

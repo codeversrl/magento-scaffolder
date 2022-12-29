@@ -12,16 +12,21 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Magento\Framework\App\Helper\Context;
 
-class ScaffolderFileHelper extends AbstractHelper {
+class ScaffolderFileHelper extends AbstractHelper
+{
 
     private $data;
 
-    public function __construct(Context $context){
+    public function __construct(Context $context)
+    {
         parent::__construct($context);
     }
-    public function render($templateFilepath, $data) {
+
+    public function render($templateFilepath, $data)
+    {
         $this->data = $data;
         ob_start();
+        $block = $this; // needs to stay here to comply template's coding standard
         try {
             include $templateFilepath;
         } catch (\Exception $exception) {
@@ -31,7 +36,8 @@ class ScaffolderFileHelper extends AbstractHelper {
         return ob_get_clean();
     }
 
-    public function write($filepath, $content){
+    public function write($filepath, $content)
+    {
         if (!file_exists($filepath)) {
             $fp = fopen($filepath, "w");
             fwrite($fp, $content);
@@ -39,11 +45,11 @@ class ScaffolderFileHelper extends AbstractHelper {
         }
     }
 
-    private function getData(string $key){
-        if(empty($key) || is_null($key) || !isset($this->data[$key])) {
+    private function getData(string $key)
+    {
+        if (empty($key) || is_null($key) || !isset($this->data[$key])) {
             return '';
         }
         return $this->data[$key];
     }
-
 }

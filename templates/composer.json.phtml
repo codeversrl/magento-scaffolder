@@ -1,5 +1,5 @@
 {
-  "name": "<?php echo strtolower($this->getData('vendor')) ?>/<?php echo strtolower($this->getData('module')) ?>",
+  "name": "<?php echo strtolower($block->getData('vendor')) ?>/<?php echo strtolower($block->getData('module')) ?>",
   "description": "",
   "require": {
     "php": "~7.4.0||~8.1.0"
@@ -23,7 +23,7 @@
       "registration.php"
     ],
     "psr-4": {
-      "<?php echo $this->getData('vendor') ?>\\<?php echo $this->getData('module') ?>\\": ""
+      "<?php echo $block->getData('vendor') ?>\\<?php echo $block->getData('module') ?>\\": ""
     }
   }
 }

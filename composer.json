@@ -1,0 +1,43 @@
+{
+  "name": "codever/magento-scaffolding",
+  "description": "A tool to generate new Magento2 modules and themes from CLI",
+  "version": "1.0.0",
+  "require": {
+    "php": "~7.4.0||~8.1.0"
+  },
+  "type": "magento2-module",
+  "keywords": [
+    "php",
+    "magento",
+    "magento2",
+    "scaffolder",
+    "scaffolding",
+    "generator",
+    "develop",
+    "developer",
+    "developing",
+    "module",
+    "theme"
+  ],
+  "homepage": "https://github.com/codeversrl/magento-scaffolder",
+  "readme": "README.md",
+  "license": [
+    "Apache-2.0",
+  ],
+  "authors": [
+    {
+      "name": "Alberto Colella",
+      "email": "alberto.colella@codever.it",
+      "homepage": "https://codever.it",
+      "role": "maintainer"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Codever\\MagentoScaffolding\\": ""
+    }
+  }
+}
