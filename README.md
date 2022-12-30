@@ -25,17 +25,22 @@ php bin/magento codever:scaffolder
 
 and follow the questions appearing on your console
 
+
+### Example
+
+![Codever Magento Scaffolder shell](https://github.com/codeversrl/magento-scaffolder/raw/docs/codever_magento_scaffolder_shell.png "Codever Magento Scaffolder shell")
+
 ## Support
 
-in [Codever](https://codever.it) we consider open source software very seriously, so if you have discovered any software bug in this project and you want to notify us, we invite you to open a pull request instead of an issue and contribute to the software improvement
+in [Codever](https://codever.it) we consider open source software very seriously, so if you have discovered any software bug in this project and you want to notify us, we invite you to [open a pull request](https://github.com/codeversrl/magento-scaffolder/compare) instead of an issue and contribute yourself to the software improvement of this project
 
 ## Hire us
 
-If you need support for this software or for Magento installation/projects, you can [contact us](https://codever.it) or [hire us](https://codever.it)
+If you need support for Magento development and projects, you can [contact us](https://codever.it) or [hire us](https://codever.it)
 
 ## Contribute
 
-this software try to follow [Magento Coding Standards](https://github.com/magento/magento-coding-standard) and so we invite you to follow them too in your contributions.
+with this software we are following [Magento Coding Standards](https://github.com/magento/magento-coding-standard) and we invite you to do the same in your contributions.
 
 
 ### Contributors
