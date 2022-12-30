@@ -1,0 +1,40 @@
+<?php
+echo '<?php'
+?>
+
+namespace <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('module') ?>\Controller\Sample;
+
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\View\Result\PageFactory;
+
+class Index extends Action
+{
+
+    /**
+     * @var PageFactory
+     */
+    protected $pageFactory;
+
+    /**
+     * Index constructor.
+     *
+     * @param Context     $context
+     * @param PageFactory $pageFactory
+     */
+    public function __construct(Context $context, PageFactory $pageFactory)
+    {
+        $this->pageFactory = $pageFactory;
+        parent::__construct($context);
+    }
+
+    /**
+     * Load the page defined in view/frontend/layout/<?php echo strtolower($this->getData('vendor') . '_' . $this->getData('module') . '_sample_index') ?>.xml
+     *
+     * @return \Magento\Framework\View\Result\\Magento\Framework\View\Result\Page
+     */
+    public function execute()
+    {
+        return $this->pageFactory->create();
+    }
+}

@@ -1,0 +1,26 @@
+<?php
+echo '<?php'
+?>
+
+namespace <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('module') ?>\Model\ResourceModel;
+
+use \Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use \Magento\Framework\Model\ResourceModel\Db\Context;
+
+
+class SampleResourceModel extends AbstractDb
+{
+
+	public function __construct(
+		Context $context
+	)
+	{
+		parent::__construct($context);
+	}
+
+	protected function _construct()
+	{
+		$this->_init('<?php echo strtolower($block->getData('vendor')) ?>_<?php echo strtolower($block->getData('module')) ?>_samplemodel', 'entity_id');
+	}
+
+}

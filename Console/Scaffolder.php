@@ -39,7 +39,7 @@ class Scaffolder extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->shell = new SymfonyStyle($input, $output);
-        $scaffolderType = $this->shell->choice('Select what do you want to generate', [self::TYPE_MODULE, self::TYPE_THEME], self::TYPE_MODULE);
+        $scaffolderType = $this->shell->choice('Select what do you want to generate', [self::TYPE_MODULE, self::TYPE_THEME], 0);
         switch ($scaffolderType) {
             case self::TYPE_MODULE:
                 $this->scaffolderHelper->startCommand($this->shell);

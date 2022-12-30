@@ -1,0 +1,17 @@
+<?php
+echo '<?php'
+?>
+
+namespace <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('module') ?>\Model\ResourceModel\Sample;
+
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('module') ?>\Model\SampleModel as Model;
+use <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('module') ?>\Model\ResourceModel\SampleResourceModel as ResourceModel;
+
+class Collection extends AbstractCollection
+{
+    protected function _construct()
+    {
+        $this->_init(Model::class, ResourceModel::class);
+    }
+}

@@ -18,23 +18,40 @@ class ScaffolderModuleHelper extends AbstractHelper
     const DIRECTORY_API = 'Api';
     const DIRECTORY_BLOCK = 'Block';
     const DIRECTORY_CONTROLLER = 'Controller';
+    const DIRECTORY_CONTROLLER_ADMINHTML = self::DIRECTORY_CONTROLLER . DIRECTORY_SEPARATOR . 'Adminhtml';
+    const DIRECTORY_CONTROLLER_ADMINHTML_SAMPLE = self::DIRECTORY_CONTROLLER_ADMINHTML . DIRECTORY_SEPARATOR . 'Sample';
+    const DIRECTORY_CONTROLLER_SAMPLE = self::DIRECTORY_CONTROLLER . DIRECTORY_SEPARATOR . 'Sample';
     const DIRECTORY_CRON = 'Cron';
     const DIRECTORY_ETC = 'etc';
+    const DIRECTORY_ETC_ADMINHTML = self::DIRECTORY_ETC . DIRECTORY_SEPARATOR . 'adminhtml';
+    const DIRECTORY_ETC_FRONTEND = self::DIRECTORY_ETC . DIRECTORY_SEPARATOR . 'frontend';
     const DIRECTORY_HELPER = 'Helper';
     const DIRECTORY_I18N = 'i18n';
     const DIRECTORY_MAIL = 'Mail';
     const DIRECTORY_MODEL = 'Model';
+    const DIRECTORY_MODEL_RESOURCEMODEL = self::DIRECTORY_MODEL . DIRECTORY_SEPARATOR . 'ResourceModel';
+    const DIRECTORY_MODEL_RESOURCEMODEL_SAMPLE = self::DIRECTORY_MODEL_RESOURCEMODEL . DIRECTORY_SEPARATOR . 'Sample';
     const DIRECTORY_OBSERVER = 'Observer';
     const DIRECTORY_PLUGIN = 'Plugin';
     const DIRECTORY_SETUP = 'Setup';
-    const DIRECTORY_TEST = 'Test'.DIRECTORY_SEPARATOR.'Unit';
+    const DIRECTORY_TEST_UNIT = 'Test'.DIRECTORY_SEPARATOR.'Unit';
     const DIRECTORY_UI = 'UI';
     const DIRECTORY_VIEW = 'view';
 
     const FILE_COMPOSER = 'composer.json';
     const FILE_README = 'README.md';
     const FILE_REGISTRATION = 'registration.php';
+    const FILE_INDEX = 'Index.php';
+    const FILE_COLLECTION = 'Collection.php';
+    const FILE_SAMPLE_RESOURCEMODEL = 'SampleResourceModel.php';
+    const FILE_SAMPLE_MODEL = 'SampleModel.php';
+    const FILE_SAMPLE_TEST = 'SampleTest.php';
     const FILE_MODULE = 'module.xml';
+    const FILE_ACL = 'acl.xml';
+    const FILE_ROUTES = 'routes.xml';
+    const FILE_MENU = 'menu.xml';
+
+    const SLEEP_TIME = 0.05;
 
     private $dir;
     private $moduleName;
@@ -60,6 +77,7 @@ class ScaffolderModuleHelper extends AbstractHelper
         $this->shell = $shell;
         if ($this->validate()) {
             $this->doJob();
+            $this->shell->success('Your new module is ready at ' . $this->getModuleBasepath());
         }
     }
 
@@ -134,28 +152,81 @@ class ScaffolderModuleHelper extends AbstractHelper
 
     protected function generateModuleDirectoriesAndFiles()
     {
-        $this->shell->progressStart(100);
-        $this->generateModuleDirectory(null);
-        $this->generateModuleDirectory(self::DIRECTORY_API);
-        $this->generateModuleDirectory(self::DIRECTORY_BLOCK);
-        $this->generateModuleDirectory(self::DIRECTORY_CONTROLLER);
-        $this->generateModuleDirectory(self::DIRECTORY_CRON);
-        $this->generateModuleDirectory(self::DIRECTORY_ETC);
-        $this->generateModuleDirectory(self::DIRECTORY_HELPER);
-        $this->generateModuleDirectory(self::DIRECTORY_I18N);
-        $this->generateModuleDirectory(self::DIRECTORY_MAIL);
-        $this->generateModuleDirectory(self::DIRECTORY_MODEL);
-        $this->generateModuleDirectory(self::DIRECTORY_OBSERVER);
-        $this->generateModuleDirectory(self::DIRECTORY_PLUGIN);
-        $this->generateModuleDirectory(self::DIRECTORY_SETUP);
-        $this->generateModuleDirectory(self::DIRECTORY_TEST);
-        $this->generateModuleDirectory(self::DIRECTORY_UI);
-        $this->generateModuleDirectory(self::DIRECTORY_VIEW);
-        $this->generateModuleFile(self::FILE_COMPOSER);
-        $this->generateModuleFile(self::FILE_README);
-        $this->generateModuleFile(self::FILE_REGISTRATION);
-        $this->generateModuleFile(self::FILE_MODULE, self::DIRECTORY_ETC);
+        $data = $this->prepareModuleDirectoriesAndFiles();
+        $countDirs = count($data['directories']);
+        $countFiles = count($data['files']);
+        $this->shell->progressStart($countDirs + 1 + $countFiles);
+        $this->generateModuleDirectory(); // first dir is the module's dir
+        foreach($data['directories'] as $obj){
+            if(property_exists($obj, 'name') && $obj->name){
+                $this->generateModuleDirectory($obj->name);
+            }
+        }
+        foreach($data['files'] as $obj){
+            if(property_exists($obj, 'name') && $obj->name){
+                if(property_exists($obj, 'directory') && $obj->directory){
+                    $this->generateModuleFile($obj->name, $obj->directory);
+                } else {
+                    $this->generateModuleFile($obj->name);
+                }
+            }
+        }
         $this->shell->progressFinish();
+    }
+
+    protected function prepareModuleDirectoriesAndFiles(){
+        $data = [];
+        $data["directories"] = [];
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_API);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_BLOCK);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_CONTROLLER_ADMINHTML_SAMPLE);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_CONTROLLER_SAMPLE);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_CRON);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_ETC_ADMINHTML);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_ETC_FRONTEND);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_HELPER);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_I18N);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_MAIL);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_MODEL_RESOURCEMODEL_SAMPLE);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_OBSERVER);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_PLUGIN);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_SETUP);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_TEST_UNIT);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_UI);
+        $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_VIEW);
+
+        $data["files"] = [];
+        $data["files"][] = $this->generateFileObject(self::FILE_COMPOSER);
+        $data["files"][] = $this->generateFileObject(self::FILE_README);
+        $data["files"][] = $this->generateFileObject(self::FILE_REGISTRATION);
+        $data["files"][] = $this->generateFileObject(self::FILE_INDEX, self::DIRECTORY_CONTROLLER_ADMINHTML_SAMPLE);
+        $data["files"][] = $this->generateFileObject(self::FILE_INDEX, self::DIRECTORY_CONTROLLER_SAMPLE);
+        $data["files"][] = $this->generateFileObject(self::FILE_MODULE, self::DIRECTORY_ETC);
+        $data["files"][] = $this->generateFileObject(self::FILE_ACL, self::DIRECTORY_ETC);
+        $data["files"][] = $this->generateFileObject(self::FILE_ROUTES, self::DIRECTORY_ETC_ADMINHTML);
+        $data["files"][] = $this->generateFileObject(self::FILE_MENU, self::DIRECTORY_ETC_ADMINHTML);
+        $data["files"][] = $this->generateFileObject(self::FILE_ROUTES, self::DIRECTORY_ETC_FRONTEND);
+        $data["files"][] = $this->generateFileObject(self::FILE_COLLECTION, self::DIRECTORY_MODEL_RESOURCEMODEL_SAMPLE);
+        $data["files"][] = $this->generateFileObject(self::FILE_SAMPLE_RESOURCEMODEL, self::DIRECTORY_MODEL_RESOURCEMODEL);
+        $data["files"][] = $this->generateFileObject(self::FILE_SAMPLE_MODEL, self::DIRECTORY_MODEL);
+        $data["files"][] = $this->generateFileObject(self::FILE_SAMPLE_TEST, self::DIRECTORY_TEST_UNIT);
+
+        return $data;
+    }
+
+    public function generateDirectoryObject($name){
+        $obj = new \stdClass();
+        $obj->name = $name;
+        return $obj;
+    }
+
+    public function generateFileObject($name, $directory=null){
+        $obj = new \stdClass();
+        $obj->name = $name;
+        if(!is_null($directory)){
+            $obj->directory = $directory;
+        }
+        return $obj;
     }
 
     protected function generateModuleDirectory(string $dirname = null)
@@ -169,7 +240,7 @@ class ScaffolderModuleHelper extends AbstractHelper
         }
         if ($this->shell) {
             $this->shell->progressAdvance();
-            $this->msleep(0.5);
+            $this->msleep(self::SLEEP_TIME);
         }
     }
 
@@ -182,7 +253,7 @@ class ScaffolderModuleHelper extends AbstractHelper
         $this->fileHelper->write($this->getDestinationFilePath($filename, $dirname), $output);
         if ($this->shell) {
             $this->shell->progressAdvance();
-            $this->msleep(0.5);
+            $this->msleep(self::SLEEP_TIME);
         }
     }
 
