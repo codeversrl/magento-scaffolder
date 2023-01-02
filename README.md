@@ -28,7 +28,7 @@ and follow the questions appearing on your console
 
 ### Example
 
-![Codever Magento Scaffolder shell](https://github.com/codeversrl/magento-scaffolder/raw/docs/codever_magento_scaffolder_shell.png "Codever Magento Scaffolder shell")
+![Codever Magento Scaffolder shell](https://github.com/codeversrl/magento-scaffolder/raw/main/dev/codever_magento_scaffolder_shell.png "Codever Magento Scaffolder shell")
 
 ## Support
 
@@ -47,6 +47,7 @@ To run coding standard check use the command
 ```
 vendor/bin/phpcs --standard=Magento2 --file-list=vendor/codever/magento-scaffolder/dev/phpcs/filelist.txt
 ```
+### License
 
 
 ### Contributors

@@ -30,7 +30,7 @@ class ScaffolderTest extends \PHPUnit\Framework\TestCase
      */
     public function testCommandExecute()
     {
-        $this->tester->setInputs(['module', 'Aaa', 'Bbb', 'no']);
+        $this->tester->setInputs(['0', 'Aaa', 'Bbb', 'no']);
         $this->tester->execute([]);
 
         $output = $this->tester->getDisplay();
