@@ -17,8 +17,14 @@
     <type name="Codever\Scaffolder\Helper\ScaffolderModuleHelper">
         <arguments>
             <argument name="context" xsi:type="object">Magento\Framework\App\Helper\Context</argument>
-            <argument name="dir" xsi:type="object">Magento\Framework\Filesystem\DirectoryList</argument>
             <argument name="fileHelper" xsi:type="object">Codever\Scaffolder\Helper\ScaffolderFileHelper</argument>
+        </arguments>
+    </type>
+    <type name="Codever\Scaffolder\Helper\ScaffolderFileHelper">
+        <arguments>
+            <argument name="dir" xsi:type="object">Magento\Framework\Filesystem\DirectoryList</argument>
+            <argument name="moduleDir" xsi:type="object">Magento\Framework\Module\Dir</argument>
+            <argument name="context" xsi:type="object">Magento\Framework\App\Helper\Context</argument>
         </arguments>
     </type>
 

@@ -3,9 +3,6 @@
 namespace Codever\Scaffolder\Helper;
 
 use \Magento\Framework\App\Helper\AbstractHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -61,13 +58,11 @@ class ScaffolderModuleHelper extends AbstractHelper
 
     public function __construct(
         Context $context,
-        \Magento\Framework\Filesystem\DirectoryList $dir,
         ScaffolderFileHelper $fileHelper
     ) {
         $this->moduleName = '';
         $this->vendorName = '';
         $this->shell = null;
-        $this->dir = $dir;
         $this->fileHelper = $fileHelper;
         parent::__construct($context);
     }
@@ -260,7 +255,7 @@ class ScaffolderModuleHelper extends AbstractHelper
     protected function getModuleBasepath() :string
     {
         $subPaths = [
-            $this->dir->getPath('app'),
+            $this->fileHelper->getMagentoPath('app'),
             'code',
             $this->vendorName,
             $this->moduleName
@@ -271,11 +266,9 @@ class ScaffolderModuleHelper extends AbstractHelper
 
     protected function getTemplatePath(string $filename, string $dirname = null) :string
     {
+        $modulePath = $this->fileHelper->getModulePath('Codever_Scaffolder');
         $subPaths = [
-            $this->dir->getPath('app'),
-            'code',
-            'Codever',
-            'Scaffolder',
+            $modulePath,
             'templates'
         ];
         $moduleBasepath = implode(DIRECTORY_SEPARATOR, $subPaths);

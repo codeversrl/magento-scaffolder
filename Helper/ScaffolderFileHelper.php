@@ -3,22 +3,25 @@
 namespace Codever\Scaffolder\Helper;
 
 use \Magento\Framework\App\Helper\AbstractHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Filesystem\DirectoryList;
+use Magento\Framework\Module\Dir;
 
 class ScaffolderFileHelper extends AbstractHelper
 {
 
     private $data;
+    private $dir;
+    private $moduleDir;
 
-    public function __construct(Context $context)
+    public function __construct(
+        Context $context,
+        DirectoryList $dir,
+        Dir $moduleDir
+        )
     {
+        $this->dir = $dir;
+        $this->moduleDir = $moduleDir;
         parent::__construct($context);
     }
 
@@ -51,5 +54,13 @@ class ScaffolderFileHelper extends AbstractHelper
             return '';
         }
         return $this->data[$key];
+    }
+
+    public function getMagentoPath(string $folderName = null){
+        return $this->dir->getPath($folderName);
+    }
+
+    public function getModulePath(string $moduleName){
+        return $this->moduleDir->getDir($moduleName);
     }
 }

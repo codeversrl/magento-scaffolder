@@ -1,5 +1,5 @@
 {
-  "name": "codever/magento-scaffolding",
+  "name": "codever/magento-scaffolder",
   "description": "A tool to generate new Magento2 modules and themes from CLI",
   "version": "1.0.0",
   "require": {
@@ -37,7 +37,7 @@
       "registration.php"
     ],
     "psr-4": {
-      "Codever\\MagentoScaffolding\\": ""
+      "Codever\\Scaffolder\\": ""
     }
   }
 }
