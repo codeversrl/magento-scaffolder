@@ -42,6 +42,12 @@ If you need support for Magento development and projects, you can [contact us](h
 
 with this software we are following [Magento Coding Standards](https://github.com/magento/magento-coding-standard) and we invite you to do the same in your contributions.
 
+To run coding standard check use the command
+
+```
+vendor/bin/phpcs --standard=Magento2 --file-list=vendor/codever/magento-scaffolder/dev/phpcs/filelist.txt
+```
+
 
 ### Contributors
 

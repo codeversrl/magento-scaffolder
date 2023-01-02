@@ -1,0 +1,3 @@
+vendor/codever/magento-scaffolder/Console
+vendor/codever/magento-scaffolder/Helper
+vendor/codever/magento-scaffolder/Test

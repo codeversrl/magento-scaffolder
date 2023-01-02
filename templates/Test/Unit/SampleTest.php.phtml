@@ -4,16 +4,17 @@ echo '<?php'
 
 namespace <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('module') ?>\Test\Unit;
 
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class SampleTest extends PHPUnit_Framework_TestCase
+class SampleTest extends \PHPUnit\Framework\TestCase
 {
+    private $objectManager;
 
     public function setUp()
     {
-        $objectManager = new ObjectManager($this);
-        $this->sampleClass = $objectManager->getObject('<?php echo $block->getData('vendor') ?>\<?php echo $block->getData('module') ?>\Model\SampleModel');
+        $this->objectManager = new ObjectManager($this);
+        $this->sampleClass = $this->objectManager->getObject('<?php echo $block->getData('vendor') ?>\<?php echo $block->getData('module') ?>\Model\SampleModel');
     }
 
     /**

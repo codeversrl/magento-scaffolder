@@ -5,6 +5,9 @@
   "require": {
     "php": "~7.4.0||~8.1.0"
   },
+  "require-dev": {
+    "magento/magento-coding-standard": "^29.0"
+  },
   "type": "magento2-module",
   "keywords": [
     "php",

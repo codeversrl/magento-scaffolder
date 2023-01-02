@@ -22,8 +22,7 @@ class Scaffolder extends Command
     public function __construct(
         ScaffolderModuleHelper $scaffolderHelper,
         string $name = null
-        )
-    {
+    ) {
         $this->scaffolderHelper = $scaffolderHelper;
         parent::__construct($name);
     }

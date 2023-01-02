@@ -76,10 +76,10 @@ class ScaffolderModuleHelper extends AbstractHelper
         }
     }
 
-    protected function validate()
+    public function validate()
     {
         $vendorName = $this->shell->ask('Your module Vendor name:', '');
-        $vendorName = preg_replace("/[^A-Za-z]+/", "", $vendorName);
+        $vendorName = $this->sanitizeModuleName($vendorName);
         if (empty($vendorName)) {
             $this->shell->warning('Cannot create a vendor with empty name');
             return false;
@@ -87,7 +87,7 @@ class ScaffolderModuleHelper extends AbstractHelper
         $this->vendorName = ucfirst(strtolower($vendorName));
         $question = new Question('Your new Module name:', '');
         $moduleName = $this->shell->ask('Your new Module name:', '');
-        $moduleName = preg_replace("/[^A-Za-z]+/", "", $moduleName);
+        $moduleName = $this->sanitizeModuleName($moduleName);
         if (empty($moduleName)) {
             $this->shell->warning('Cannot create a new module with empty name');
             return false;
@@ -104,17 +104,22 @@ class ScaffolderModuleHelper extends AbstractHelper
         return true;
     }
 
+    public function sanitizeModuleName(string $name): string
+    {
+        return preg_replace("/[^A-Za-z]+/", "", $name);
+    }
+
     protected function getStatus()
     {
         $moduleFinalPath = $this->getModuleBasepath() . DIRECTORY_SEPARATOR . $this->vendorName.'_'.$this->moduleName;
-        return array(
+        return [
             "header" => ['Your data', ''],
             "body" => [
                 ['vendor', $this->vendorName],
                 ['module', $this->moduleName],
                 ['path', $moduleFinalPath],
             ]
-        );
+        ];
     }
 
     protected function doJob()
@@ -152,14 +157,14 @@ class ScaffolderModuleHelper extends AbstractHelper
         $countFiles = count($data['files']);
         $this->shell->progressStart($countDirs + 1 + $countFiles);
         $this->generateModuleDirectory(); // first dir is the module's dir
-        foreach($data['directories'] as $obj){
-            if(property_exists($obj, 'name') && $obj->name){
+        foreach ($data['directories'] as $obj) {
+            if (property_exists($obj, 'name') && $obj->name) {
                 $this->generateModuleDirectory($obj->name);
             }
         }
-        foreach($data['files'] as $obj){
-            if(property_exists($obj, 'name') && $obj->name){
-                if(property_exists($obj, 'directory') && $obj->directory){
+        foreach ($data['files'] as $obj) {
+            if (property_exists($obj, 'name') && $obj->name) {
+                if (property_exists($obj, 'directory') && $obj->directory) {
                     $this->generateModuleFile($obj->name, $obj->directory);
                 } else {
                     $this->generateModuleFile($obj->name);
@@ -169,7 +174,8 @@ class ScaffolderModuleHelper extends AbstractHelper
         $this->shell->progressFinish();
     }
 
-    protected function prepareModuleDirectoriesAndFiles(){
+    protected function prepareModuleDirectoriesAndFiles()
+    {
         $data = [];
         $data["directories"] = [];
         $data["directories"][] = $this->generateDirectoryObject(self::DIRECTORY_API);
@@ -209,30 +215,30 @@ class ScaffolderModuleHelper extends AbstractHelper
         return $data;
     }
 
-    public function generateDirectoryObject($name){
+    public function generateDirectoryObject($name)
+    {
         $obj = new \stdClass();
         $obj->name = $name;
         return $obj;
     }
 
-    public function generateFileObject($name, $directory=null){
+    public function generateFileObject($name, $directory = null)
+    {
         $obj = new \stdClass();
         $obj->name = $name;
-        if(!is_null($directory)){
+        if (!is_null($directory)) {
             $obj->directory = $directory;
         }
         return $obj;
     }
 
-    protected function generateModuleDirectory(string $dirname = null)
+    public function generateModuleDirectory(string $dirname = null)
     {
         $path = $this->getModuleBasepath();
         if ($dirname) {
             $path .= DIRECTORY_SEPARATOR . $dirname;
         }
-        if (!file_exists($path)) {
-            mkdir($path, 0755, true);
-        }
+        $this->fileHelper->createDirIfNotExists($path);
         if ($this->shell) {
             $this->shell->progressAdvance();
             $this->msleep(self::SLEEP_TIME);

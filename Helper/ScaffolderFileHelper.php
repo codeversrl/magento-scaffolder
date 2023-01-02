@@ -18,8 +18,7 @@ class ScaffolderFileHelper extends AbstractHelper
         Context $context,
         DirectoryList $dir,
         Dir $moduleDir
-        )
-    {
+    ) {
         $this->dir = $dir;
         $this->moduleDir = $moduleDir;
         parent::__construct($context);
@@ -56,11 +55,20 @@ class ScaffolderFileHelper extends AbstractHelper
         return $this->data[$key];
     }
 
-    public function getMagentoPath(string $folderName = null){
+    public function getMagentoPath(string $folderName = null)
+    {
         return $this->dir->getPath($folderName);
     }
 
-    public function getModulePath(string $moduleName){
+    public function getModulePath(string $moduleName)
+    {
         return $this->moduleDir->getDir($moduleName);
+    }
+
+    public function createDirIfNotExists($path, $mode = 0755, $recursive = true)
+    {
+        if (!file_exists($path)) {
+            mkdir($path, $mode, $recursive);
+        }
     }
 }
