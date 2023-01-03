@@ -8,16 +8,10 @@
             </argument>
         </arguments>
     </type>
-    <type name="Codever\Scaffolder\Console\Scaffolder">
+    <type name="Codever\Scaffolder\Console\Command\Scaffolder">
         <arguments>
-            <argument name="scaffolderHelper" xsi:type="object">Codever\Scaffolder\Helper\ScaffolderModuleHelper</argument>
-            <!--<argument name="name" xsi:type="string"></argument>-->
-        </arguments>
-    </type>
-    <type name="Codever\Scaffolder\Helper\ScaffolderModuleHelper">
-        <arguments>
-            <argument name="context" xsi:type="object">Magento\Framework\App\Helper\Context</argument>
             <argument name="fileHelper" xsi:type="object">Codever\Scaffolder\Helper\ScaffolderFileHelper</argument>
+            <!--<argument name="name" xsi:type="string"></argument>-->
         </arguments>
     </type>
     <type name="Codever\Scaffolder\Helper\ScaffolderFileHelper">

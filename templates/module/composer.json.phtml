@@ -1,0 +1,30 @@
+{
+  "name": "<?php echo strtolower($block->getData('vendor')) ?>/<?php echo strtolower($block->getData('extension')) ?>",
+  "description": "",
+  "require": {
+    "php": "~7.4.0||~8.1.0",
+    "magento/framework": "^102.0|^103.0"
+  },
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "authors": [
+    {
+      "name": "",
+      "email": "",
+      "homepage": "",
+      "role": ""
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "<?php echo $block->getData('vendor') ?>\\<?php echo $block->getData('extension') ?>\\": ""
+    }
+  }
+}

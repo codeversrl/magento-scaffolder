@@ -1,0 +1,36 @@
+<?php
+echo '<?php'
+?>
+
+namespace <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('extension') ?>\Test\Unit;
+
+use \PHPUnit\Framework\TestCase;
+use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+
+class SampleTest extends \PHPUnit\Framework\TestCase
+{
+    private $objectManager;
+
+    public function setUp()
+    {
+        $this->objectManager = new ObjectManager($this);
+        $this->sampleClass = $this->objectManager->getObject('<?php echo $block->getData('vendor') ?>\<?php echo $block->getData('extension') ?>\Model\SampleModel');
+    }
+
+    /**
+     * @test
+     */
+    public function testUnitTests()
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * @test
+     */
+    public function testSampleClass()
+    {
+        $result = $this->sampleClass->getSampleTestValue();
+        $this->assertEquals($result, "Hello World!");
+    }
+}

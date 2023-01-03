@@ -71,4 +71,68 @@ class ScaffolderFileHelper extends AbstractHelper
             mkdir($path, $mode, $recursive);
         }
     }
+
+    public function generateDestinationDirectory(string $basepath, string $dirname = null)
+    {
+        $path = $this->getDestinationBasepath($basepath);
+        if ($dirname) {
+            $path .= DIRECTORY_SEPARATOR . $dirname;
+        }
+        $this->fileHelper->createDirIfNotExists($path);
+    }
+
+    public function generateDestinationFile(
+        string $type,
+        string $destinationBasepath,
+        string $filename,
+        string $data,
+        string $dirname = null,
+        string $templateExtension = '.phtml')
+    {
+        $templateFile = $filename.$templateExtension;
+        $template = $this->getOriginTemplatePath($type, $templateFile, $dirname);
+        $output = $this->render($template, $data);
+        $this->write($this->getDestinationFilePath($destinationBasepath, $filename, $dirname), $output);
+    }
+
+
+    public function getOriginTemplatePath(string $type, string $filename, string $dirname = null) :string
+    {
+        $modulePath = $this->getModulePath('Codever_Scaffolder');
+        $subPaths = [
+            $modulePath,
+            'templates',
+            $type
+        ];
+        $moduleBasepath = implode(DIRECTORY_SEPARATOR, $subPaths);
+        $templateFile = $moduleBasepath;
+        if ($dirname) {
+            $templateFile .=  DIRECTORY_SEPARATOR . $dirname;
+        }
+        $templateFile .= DIRECTORY_SEPARATOR . $filename;
+        return $templateFile;
+    }
+
+    public function getDestinationFilePath(string $basepath, string $filename, string $dirname = null) :string
+    {
+        $path = $this->getDestinationBasepath($basepath);
+        $destinationFile = $path;
+        if ($dirname) {
+            $destinationFile .=  DIRECTORY_SEPARATOR . $dirname;
+        }
+        $destinationFile .= DIRECTORY_SEPARATOR . $filename;
+        return $destinationFile;
+    }
+
+    public function getDestinationBasepath(string $basepath, $vendorName, $moduleName) :string
+    {
+        $subPaths = [
+            $this->getMagentoPath('app'),
+            $basepath, // 'code' or 'design'.DIRECTORY_SEPARATOR.'frontend'
+            $vendorName,
+            $moduleName
+        ];
+        $moduleBasepath = implode(DIRECTORY_SEPARATOR, $subPaths);
+        return $moduleBasepath;
+    }
 }

@@ -1,0 +1,49 @@
+<?php
+echo '<?php'
+?>
+
+
+namespace <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('extension') ?>\Model;
+
+/**
+ * Class <?php echo $block->getData('class_name') ?>
+ *
+ *
+ * @method \<?php echo $block->getData('vendor') ?>\<?php echo $block->getData('extension') ?>\Model\ResourceModel\SampleModel_getResource()
+ *
+ * @package <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('extension') ?>\Model
+ */
+class SampleModel extends \Magento\Framework\Model\AbstractModel implements \Magento\Framework\DataObject\IdentityInterface
+{
+    const CACHE_TAG = '<?php echo strtolower($block->getData('vendor')) ?>_<?php echo strtolower($block->getData('extension')) ?>_samplemodel';
+
+	protected $_cacheTag = '<?php echo strtolower($block->getData('vendor')) ?>_<?php echo strtolower($block->getData('extension')) ?>_samplemodel';
+
+	protected $_eventPrefix = '<?php echo strtolower($block->getData('vendor')) ?>_<?php echo strtolower($block->getData('extension')) ?>_samplemodel';
+
+    /**
+     * Initialize resource model
+     *
+     * @return void
+     */
+    protected function _construct()
+    {
+        $this->_init('<?php echo $block->getData('vendor') ?>\<?php echo $block->getData('extension') ?>\Model\ResourceModel\SampleModelResource');
+    }
+
+    public function getIdentities()
+	{
+		return [self::CACHE_TAG . '_' . $this->getId()];
+	}
+
+	public function getDefaultValues()
+	{
+		$values = [];
+
+		return $values;
+	}
+
+    public function getSampleTestValue(){
+        return "Hello World!";
+    }
+}

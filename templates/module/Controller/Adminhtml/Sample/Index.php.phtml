@@ -1,0 +1,38 @@
+<?php
+echo '<?php'
+?>
+
+namespace <?php echo $block->getData('vendor') ?>\<?php echo $block->getData('extension') ?>\Controller\Adminhtml\Sample;
+
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\View\Result\PageFactory;
+use Magento\Framework\Registry;
+
+class Index extends Action {
+
+    protected $pageFactory;
+
+    public function __construct(
+        Context $context,
+        Registry $coreRegistry,
+        PageFactory $pageFactory
+    ) {
+        $this->pageFactory = $pageFactory;
+        parent::__construct($context, $coreRegistry);
+    }
+
+    public function execute()
+    {
+        $resultPage = $this->pageFactory->create();
+        $resultPage->setActiveMenu('Aaa_Eee::manager');
+        //$resultPage = $this->_initAction();
+        $resultPage->getConfig()->getTitle()->prepend(__('Sample Index'));
+        return $resultPage;
+    }
+
+    protected function _isAllowed()
+    {
+        return $this->_authorization->isAllowed('<?php echo $block->getData('vendor') ?>_<?php echo $block->getData('extension') ?>::sample');
+    }
+}
