@@ -78,34 +78,27 @@ class ScaffolderFileHelper extends AbstractHelper
         if ($dirname) {
             $path .= DIRECTORY_SEPARATOR . $dirname;
         }
-        $this->fileHelper->createDirIfNotExists($path);
+        $this->createDirIfNotExists($path);
     }
 
     public function generateDestinationFile(
-        string $type,
+        string $originBasepath,
         string $destinationBasepath,
         string $filename,
-        string $data,
+        array $data,
         string $dirname = null,
         string $templateExtension = '.phtml')
     {
         $templateFile = $filename.$templateExtension;
-        $template = $this->getOriginTemplatePath($type, $templateFile, $dirname);
+        $template = $this->getOriginTemplatePath($originBasepath, $templateFile, $dirname);
         $output = $this->render($template, $data);
         $this->write($this->getDestinationFilePath($destinationBasepath, $filename, $dirname), $output);
     }
 
 
-    public function getOriginTemplatePath(string $type, string $filename, string $dirname = null) :string
+    public function getOriginTemplatePath(string $originBasepath, string $filename, string $dirname = null) :string
     {
-        $modulePath = $this->getModulePath('Codever_Scaffolder');
-        $subPaths = [
-            $modulePath,
-            'templates',
-            $type
-        ];
-        $moduleBasepath = implode(DIRECTORY_SEPARATOR, $subPaths);
-        $templateFile = $moduleBasepath;
+        $templateFile = $originBasepath;
         if ($dirname) {
             $templateFile .=  DIRECTORY_SEPARATOR . $dirname;
         }
@@ -124,15 +117,16 @@ class ScaffolderFileHelper extends AbstractHelper
         return $destinationFile;
     }
 
-    public function getDestinationBasepath(string $basepath, $vendorName, $moduleName) :string
+    public function getDestinationBasepath(string $basepath) :string
     {
         $subPaths = [
             $this->getMagentoPath('app'),
-            $basepath, // 'code' or 'design'.DIRECTORY_SEPARATOR.'frontend'
-            $vendorName,
-            $moduleName
+            $basepath, // 'code' or 'design'.DIRECTORY_SEPARATOR.'frontend' + vendor + name
         ];
-        $moduleBasepath = implode(DIRECTORY_SEPARATOR, $subPaths);
-        return $moduleBasepath;
+        $finalBasepath = implode(DIRECTORY_SEPARATOR, $subPaths);
+        return $finalBasepath;
     }
+
+
+
 }

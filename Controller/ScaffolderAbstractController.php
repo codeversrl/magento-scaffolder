@@ -4,17 +4,22 @@ namespace Codever\Scaffolder\Controller;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Magento\Framework\App\Helper\Context;
+use Codever\Scaffolder\Helper\ScaffolderFileHelper;
+use Codever\Scaffolder\Model\ScaffolderOperationModel;
 
 abstract class ScaffolderAbstractController
 {
 
+    const OPERATION_DIRECTORY_NEW = 'scaffolder:directory:new';
+    const OPERATION_FILE_NEW = 'scaffolder:file:new';
     const SLEEP_TIME = 0.05;
+
 
     protected $fileHelper;
     protected $operations;
-    private $shell;
-    private $extensionName;
-    private $vendorName;
+    protected $shell;
+    protected $extensionName;
+    protected $vendorName;
 
     public function __construct(
         ScaffolderFileHelper $fileHelper
@@ -42,19 +47,19 @@ abstract class ScaffolderAbstractController
 
     public function validate()
     {
-        $vendorName = $this->askName(self::SCAFFOLDER_TYPE, 'vendor');
+        $vendorName = $this->askName(static::SCAFFOLDER_TYPE, 'vendor');
         if($vendorName){
-            $extensionName = $this->askName(self::SCAFFOLDER_TYPE, 'name');
+            $extensionName = $this->askName(static::SCAFFOLDER_TYPE, 'name');
             if($extensionName){
                 $this->vendorName = ucfirst(strtolower($vendorName));
                 $this->extensionName = ucfirst(strtolower($extensionName));
-                $res = $this->getStatus();
+                $res = $this->showRecap();
                 $this->shell->table($res['header'], $res['body']);
                 if (!$this->shell->confirm('Do you wish to continue?', 'Y')) {
-                    $this->shell->warning('Exiting without creating ' . self::SCAFFOLDER_TYPE . '...');
+                    $this->shell->warning('Exiting without creating ' . static::SCAFFOLDER_TYPE . '...');
                     return false;
                 }
-                $this->shell->text('Creating ' . self::SCAFFOLDER_TYPE . '...');
+                $this->shell->text('Creating ' . static::SCAFFOLDER_TYPE . '...');
                 return true;
             }
         }
@@ -90,7 +95,7 @@ abstract class ScaffolderAbstractController
     }
 
 
-    protected function createDestinationFileContent(string $template = null)
+    protected function createDestinationFileContent()
     {
         $data = [];
         $data['vendor'] = $this->vendorName;
@@ -99,7 +104,7 @@ abstract class ScaffolderAbstractController
     }
 
 
-    public function do(): boolval
+    public function do() :bool
     {
         try {
             $totalOperations = count($this->operations);
@@ -109,7 +114,7 @@ abstract class ScaffolderAbstractController
             }
             $this->shell->progressFinish();
             return true;
-        } catch(\Exception e){
+        } catch(\Exception $e) {
             $this->shell->error($e->getMessage());
             return false;
         }
@@ -117,18 +122,19 @@ abstract class ScaffolderAbstractController
 
     public function doOperation($op)
     {
-        switch($op->action) {
-            case 'scaffolder:directory:new':
-                if (property_exists($op, 'name')){
-                    $this->generateDestinationDirectory($op->name);
+        switch($op->getAction()) {
+            case self::OPERATION_DIRECTORY_NEW:
+                if ($op->getArg('name')){
+                    $this->generateDestinationDirectory($op->getArg('name'));
                 }
             break;
-            case 'scaffolder:file:new':
-                if (property_exists($op, 'name') && $op->name) {
-                    if (property_exists($op, 'directory') && $op->directory) {
-                        $this->generateDestinationFile($op->name, $op->directory);
+            case self::OPERATION_FILE_NEW:
+                if ($op->getArg('name')) {
+                    $data = $this->createDestinationFileContent();
+                    if ($op->getArg('directory')) {
+                        $this->generateDestinationFile($op->getArg('name'), $data, $op->getArg('directory'));
                     } else {
-                        $this->generateDestinationFile($op->name);
+                        $this->generateDestinationFile($op->getArg('name'), $data);
                     }
                     $this->advanceProgress();
                 }
@@ -138,7 +144,7 @@ abstract class ScaffolderAbstractController
 
     protected function showRecap()
     {
-        $destinationFinalPath = $this->getDestinationBasepath() . DIRECTORY_SEPARATOR . $this->vendorName.'_'.$this->extensionName;
+        $destinationFinalPath = $this->getDestinationBasepath();
         return [
             "header" => ['Your data', ''],
             "body" => [
@@ -166,10 +172,10 @@ abstract class ScaffolderAbstractController
             $this->shell->warning('Cannot create a ' . $type . ' ' . $name . ' with empty name');
             return false;
         }
-        return true;
+        return $vendorName;
     }
 
-    public function sanitizeExtensionName(string $name): string
+    public function sanitizeExtensionName(string $name) :string
     {
         return preg_replace("/[^A-Za-z]+/", "", $name);
     }
@@ -187,45 +193,62 @@ abstract class ScaffolderAbstractController
         usleep((int)($time * 1000000));
     }
 
-    public function doOperation($op)
-    {
-        return true;
-    }
-
     public function createOperation($action, $args)
     {
-        return new ScaffolderOperationModule($action, $args);
-
+        return new ScaffolderOperationModel($action, $args);
     }
 
     public function addOperation($op)
     {
-        $this->operation[] = $op;
+        $this->operations[] = $op;
     }
 
     public function generateDestinationDirectory($name)
     {
-        $basepath = $this->getInnerPath();
+        $basepath = $this->getDestinationAppPath();
         $this->fileHelper->generateDestinationDirectory($basepath, $name);
     }
 
-    public function generateDestinationFile($name, $directory = null)
+    public function generateDestinationFile($fileName, $data, $directory = null)
     {
-        $basepath = $this->getInnerPath();
-        $this->fileHelper->generateDestinationFile($basepath, $name, $directory);
+        $originBasepath = $this->getTemplateBasepath();
+        $destinationBasepath = $this->getDestinationAppPath();
+        $this->fileHelper->generateDestinationFile($originBasepath, $destinationBasepath, $fileName, $data, $directory);
     }
 
-    public function getInnerPath(){
-        switch(self::SCAFFOLDER_TYPE){
-            case 'module':
-                return 'code';
-            case 'frontend':
-                return 'design' . DIRECTORY_SEPARATOR . 'frontend';
-        }
+    public function getDestinationAppPath(){
+        return 'code' . DIRECTORY_SEPARATOR . $this->vendorName . DIRECTORY_SEPARATOR . $this->extensionName;
     }
 
     public function getDestinationBasepath(){
-        $basepath = $this->getInnerPath();
-        $this->fileHelper->getDestinationBasepath($basepath, $this->vendorName, $this->extensionName);
+        $basepath = $this->getDestinationAppPath();
+        return $this->fileHelper->getDestinationBasepath($basepath);
+    }
+
+    public function generateDirectoryOperation($name = null)
+    {
+        $args = ['name'=>$name];
+        $op = $this->createOperation(self::OPERATION_DIRECTORY_NEW, $args);
+        $this->addOperation($op);
+    }
+
+    public function generateFileOperation($name, $directory = null)
+    {
+        $args = ['name'=>$name];
+        if (!is_null($directory)) {
+            $args['directory'] = $directory;
+        }
+        $op = $this->createOperation(self::OPERATION_FILE_NEW, $args);
+        $this->addOperation($op);
+    }
+
+    public function getTemplateBasepath()
+    {
+        $originPath = $this->fileHelper->getModulePath('Codever_Scaffolder');
+        $subPaths = [
+            $originPath,
+            'templates'
+        ];
+        return implode(DIRECTORY_SEPARATOR, $subPaths);
     }
 }

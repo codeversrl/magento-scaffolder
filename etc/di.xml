@@ -4,7 +4,7 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="CodeverScaffolder" xsi:type="object">Codever\Scaffolder\Console\Scaffolder</item>
+                <item name="CodeverScaffolder" xsi:type="object">Codever\Scaffolder\Console\Command\Scaffolder</item>
             </argument>
         </arguments>
     </type>

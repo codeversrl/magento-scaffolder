@@ -3,7 +3,7 @@ namespace Codever\Scaffolder\Test\Unit;
 
 use \PHPUnit\Framework\TestCase;
 use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Codever\Scaffolder\Console\Scaffolder;
+use Codever\Scaffolder\Console\Command\Scaffolder;
 use Codever\Scaffolder\Helper\ScaffolderFileHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Magento\Framework\Console\Cli;

@@ -52,7 +52,7 @@ class ScaffolderModuleController extends ScaffolderAbstractController
         parent::__construct($fileHelper);
     }
 
-    public function prepareModuleDirectories()
+    public function prepareDestinationDirectories()
     {
         $this->generateDirectoryOperation();
         $this->generateDirectoryOperation(self::DIRECTORY_API);
@@ -74,7 +74,7 @@ class ScaffolderModuleController extends ScaffolderAbstractController
         $this->generateDirectoryOperation(self::DIRECTORY_VIEW);
     }
 
-    public function prepareModuleFiles()
+    public function prepareDestinationFiles()
     {
         $this->generateFileOperation(self::FILE_COMPOSER);
         $this->generateFileOperation(self::FILE_README);
@@ -92,21 +92,19 @@ class ScaffolderModuleController extends ScaffolderAbstractController
         $this->generateFileOperation(self::FILE_SAMPLE_TEST, self::DIRECTORY_TEST_UNIT);
     }
 
-    public function generateDirectoryOperation($name = null)
-    {
-        $args = ['name'=>$name];
-        $op = $this->createOperation('scaffolder:directory:new', $args);
-        $this->addOperation($op);
+    public function getDestinationAppPath(){
+        return 'code' . DIRECTORY_SEPARATOR . $this->vendorName . DIRECTORY_SEPARATOR . $this->extensionName;
     }
 
-    public function generateFileOperation($name, $directory = null)
+    public function getTemplateBasepath()
     {
-        $args = ['name'=>$name];
-        if (!is_null($directory)) {
-            $args['directory'] = $directory;
-        }
-        $op = $this->createOperation('scaffolder:file:new', $args);
-        $this->addOperation($op);
+        $originPath = $this->fileHelper->getModulePath('Codever_Scaffolder');
+        $subPaths = [
+            $originPath,
+            'templates',
+            self::SCAFFOLDER_TYPE
+        ];
+        return implode(DIRECTORY_SEPARATOR, $subPaths);
     }
 
 }

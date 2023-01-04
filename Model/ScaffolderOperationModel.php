@@ -3,18 +3,18 @@ namespace Codever\Scaffolder\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
-class ScaffolderOperationModel extends AbstractModel
+class ScaffolderOperationModel
 {
 
-    private $action;
+    protected $action;
 
-    protected function _construct($action, $args)
+    public function __construct($action, $args)
     {
-        $this->$action = $action;
+        $this->setAction($action);
         $this->setArgs($args);
     }
 
-    private setArgs($args)
+    protected function setArgs($args)
     {
         if(count($args)){
             foreach($args as $key=>$value){
@@ -23,11 +23,22 @@ class ScaffolderOperationModel extends AbstractModel
         }
     }
 
-    public getArg($name){
-        if(property_exists($this,$name)){
+    public function getArg($name)
+    {
+        if(property_exists($this, $name)){
             return $this->$name;
         }
         return null;
+    }
+
+    protected function setAction(string $action)
+    {
+        $this->action = $action;
+    }
+
+    public function getAction() :string
+    {
+        return $this->action;
     }
 
 

@@ -7,6 +7,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use Codever\Scaffolder\Controller\ScaffolderModuleController;
+use Codever\Scaffolder\Helper\ScaffolderFileHelper;
+
 
 class Scaffolder extends Command
 {
@@ -38,15 +40,17 @@ class Scaffolder extends Command
         $this->shell = new SymfonyStyle($input, $output);
         $scaffolderTypes = $this->getScaffoldingTypeList();
         $scaffolderType = $this->shell->choice('Select what do you want to generate', array_keys($scaffolderTypes), 0);
-        $this->scaffolder = new $scaffolderTypes[$scaffolderType]($this->fileHelper);
-        $this->scaffolder->startCommand($this->shell);
-        break;
+        $className = $scaffolderTypes[$scaffolderType];
+        $r = new \ReflectionClass($className);
+        $this->scaffolder = $r->newInstanceArgs([$this->fileHelper]);
+        //$this->scaffolder = new ($this->fileHelper);
+        $this->scaffolder->execute($this->shell);
     }
 
     public function getScaffoldingTypeList(){
         return [
-            self::TYPE_MODULE => ,
-            self::TYPE_THEME_FRONTEND
-        ]
+            self::TYPE_MODULE => \Codever\Scaffolder\Controller\ScaffolderModuleController::class,
+            self::TYPE_THEME_FRONTEND => \Codever\Scaffolder\Controller\ScaffolderThemeController::class
+        ];
     }
 }
