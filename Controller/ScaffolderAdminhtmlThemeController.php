@@ -5,7 +5,7 @@ namespace Codever\Scaffolder\Controller;
 use Codever\Scaffolder\Helper\ScaffolderFileHelper;
 use Codever\Scaffolder\Controller\ScaffolderAbstractController;
 
-class ScaffolderThemeController extends ScaffolderAbstractController
+class ScaffolderAdminhtmlThemeController extends ScaffolderAbstractController
 {
 
     const DIRECTORY_ETC = 'etc';
@@ -22,7 +22,7 @@ class ScaffolderThemeController extends ScaffolderAbstractController
     const FILE_REGISTRATION = 'registration.php';
     const FILE_THEME = 'theme.xml';
 
-    const SCAFFOLDER_TYPE = 'frontend';
+    const SCAFFOLDER_TYPE = 'adminhtml';
 
     public function __construct(
         ScaffolderFileHelper $fileHelper
@@ -50,7 +50,7 @@ class ScaffolderThemeController extends ScaffolderAbstractController
     }
 
     public function getDestinationAppPath(){
-        return 'design' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . $this->vendorName . DIRECTORY_SEPARATOR . $this->extensionName;
+        return 'design' . DIRECTORY_SEPARATOR . 'adminhtml' . DIRECTORY_SEPARATOR . $this->vendorName . DIRECTORY_SEPARATOR . $this->extensionName;
     }
 
     public function getTemplateBasepath()

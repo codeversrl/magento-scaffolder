@@ -1,0 +1,7 @@
+<?php echo '<?php' ?>
+
+\Magento\Framework\Component\ComponentRegistrar::register(
+    \Magento\Framework\Component\ComponentRegistrar::THEME,
+    'adminhtml/<?php echo $block->getData('vendor') ?>/<?php echo strtolower($block->getData('module')) ?>',
+    __DIR__
+);

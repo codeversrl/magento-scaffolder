@@ -15,6 +15,8 @@ class Scaffolder extends Command
     const ARGUMENT_TYPE = "type";
     const TYPE_MODULE = "module";
     const TYPE_THEME_FRONTEND = "frontend";
+    const TYPE_THEME_ADMINHTML = "adminhtml";
+
 
     private $fileHelper;
     private $shell;
@@ -50,7 +52,8 @@ class Scaffolder extends Command
     public function getScaffoldingTypeList(){
         return [
             self::TYPE_MODULE => \Codever\Scaffolder\Controller\ScaffolderModuleController::class,
-            self::TYPE_THEME_FRONTEND => \Codever\Scaffolder\Controller\ScaffolderThemeController::class
+            self::TYPE_THEME_FRONTEND => \Codever\Scaffolder\Controller\ScaffolderFrontendThemeController::class,
+            self::TYPE_THEME_ADMINHTML => \Codever\Scaffolder\Controller\ScaffolderAdminhtmlThemeController::class
         ];
     }
 }
