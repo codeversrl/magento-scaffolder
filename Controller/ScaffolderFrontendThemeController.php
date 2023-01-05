@@ -8,29 +8,28 @@ use Codever\Scaffolder\Controller\ScaffolderAbstractController;
 class ScaffolderFrontendThemeController extends ScaffolderAbstractController
 {
 
-    const DIRECTORY_ETC = 'etc';
-    const DIRECTORY_LAYOUT = 'layout';
-    const DIRECTORY_WEB = 'web';
-    const DIRECTORY_WEB_CSS = self::DIRECTORY_WEB . DIRECTORY_SEPARATOR . 'css';
-    const DIRECTORY_WEB_CSS_SOURCE = self::DIRECTORY_WEB_CSS . DIRECTORY_SEPARATOR . 'source';
-    const DIRECTORY_WEB_FONTS = self::DIRECTORY_WEB . DIRECTORY_SEPARATOR . 'fonts';
-    const DIRECTORY_WEB_IMAGES = self::DIRECTORY_WEB . DIRECTORY_SEPARATOR . 'images';
-    const DIRECTORY_WEB_JS = self::DIRECTORY_WEB . DIRECTORY_SEPARATOR . 'js';
+    public const DIRECTORY_ETC = 'etc';
+    public const DIRECTORY_LAYOUT = 'layout';
+    public const DIRECTORY_WEB = 'web';
+    public const DIRECTORY_WEB_CSS = self::DIRECTORY_WEB . DIRECTORY_SEPARATOR . 'css';
+    public const DIRECTORY_WEB_CSS_SOURCE = self::DIRECTORY_WEB_CSS . DIRECTORY_SEPARATOR . 'source';
+    public const DIRECTORY_WEB_FONTS = self::DIRECTORY_WEB . DIRECTORY_SEPARATOR . 'fonts';
+    public const DIRECTORY_WEB_IMAGES = self::DIRECTORY_WEB . DIRECTORY_SEPARATOR . 'images';
+    public const DIRECTORY_WEB_JS = self::DIRECTORY_WEB . DIRECTORY_SEPARATOR . 'js';
 
-    const FILE_COMPOSER = 'composer.json';
-    const FILE_README = 'README.md';
-    const FILE_REGISTRATION = 'registration.php';
-    const FILE_THEME = 'theme.xml';
+    public const FILE_COMPOSER = 'composer.json';
+    public const FILE_README = 'README.md';
+    public const FILE_REGISTRATION = 'registration.php';
+    public const FILE_THEME = 'theme.xml';
 
-    const SCAFFOLDER_TYPE = 'frontend';
+    public const SCAFFOLDER_TYPE = 'frontend';
 
-    public function __construct(
-        ScaffolderFileHelper $fileHelper
-    ) {
-        parent::__construct($fileHelper);
-    }
-
-    public function prepareDestinationDirectories()
+    /**
+     * Generates operations to write all needed folders
+     *
+     * @return void
+     */
+    public function prepareDestinationDirectories(): void
     {
         $this->generateDirectoryOperation();
         $this->generateDirectoryOperation(self::DIRECTORY_ETC);
@@ -41,7 +40,12 @@ class ScaffolderFrontendThemeController extends ScaffolderAbstractController
         $this->generateDirectoryOperation(self::DIRECTORY_WEB_JS);
     }
 
-    public function prepareDestinationFiles()
+    /**
+     * Generates operations to write all needed files
+     *
+     * @return void
+     */
+    public function prepareDestinationFiles(): void
     {
         $this->generateFileOperation(self::FILE_COMPOSER);
         $this->generateFileOperation(self::FILE_README);
@@ -49,11 +53,23 @@ class ScaffolderFrontendThemeController extends ScaffolderAbstractController
         $this->generateFileOperation(self::FILE_THEME);
     }
 
-    public function getDestinationAppPath(){
+    /**
+     * The subpath from "app" Magento path where to store new extension files
+     *
+     * @return string
+     */
+    public function getDestinationAppPath(): string
+    {
+        // phpcs:ignore
         return 'design' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . $this->vendorName . DIRECTORY_SEPARATOR . $this->extensionName;
     }
 
-    public function getTemplateBasepath()
+    /**
+     * Overrides parent method to specify the right template folder for frontend theme creation
+     *
+     * @return string
+     */
+    public function getTemplateBasepath(): string
     {
         $originPath = $this->fileHelper->getModulePath('Codever_Scaffolder');
         $subPaths = [
@@ -64,4 +80,14 @@ class ScaffolderFrontendThemeController extends ScaffolderAbstractController
         return implode(DIRECTORY_SEPARATOR, $subPaths);
     }
 
+    /**
+     * Displays a final success message to the user
+     *
+     * @return void
+     */
+    public function success(): void
+    {
+        $destinationFinalPath = $this->getDestinationBasepath();
+        $this->shell->success('Your new frontend theme has been successfully created at ' . $destinationFinalPath);
+    }
 }

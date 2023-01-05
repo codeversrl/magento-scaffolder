@@ -8,51 +8,52 @@ use Codever\Scaffolder\Controller\ScaffolderAbstractController;
 class ScaffolderModuleController extends ScaffolderAbstractController
 {
 
-    const DIRECTORY_API = 'Api';
-    const DIRECTORY_BLOCK = 'Block';
-    const DIRECTORY_CONTROLLER = 'Controller';
-    const DIRECTORY_CONTROLLER_ADMINHTML = self::DIRECTORY_CONTROLLER . DIRECTORY_SEPARATOR . 'Adminhtml';
-    const DIRECTORY_CONTROLLER_ADMINHTML_SAMPLE = self::DIRECTORY_CONTROLLER_ADMINHTML . DIRECTORY_SEPARATOR . 'Sample';
-    const DIRECTORY_CONTROLLER_SAMPLE = self::DIRECTORY_CONTROLLER . DIRECTORY_SEPARATOR . 'Sample';
-    const DIRECTORY_CRON = 'Cron';
-    const DIRECTORY_ETC = 'etc';
-    const DIRECTORY_ETC_ADMINHTML = self::DIRECTORY_ETC . DIRECTORY_SEPARATOR . 'adminhtml';
-    const DIRECTORY_ETC_FRONTEND = self::DIRECTORY_ETC . DIRECTORY_SEPARATOR . 'frontend';
-    const DIRECTORY_HELPER = 'Helper';
-    const DIRECTORY_I18N = 'i18n';
-    const DIRECTORY_MAIL = 'Mail';
-    const DIRECTORY_MODEL = 'Model';
-    const DIRECTORY_MODEL_RESOURCEMODEL = self::DIRECTORY_MODEL . DIRECTORY_SEPARATOR . 'ResourceModel';
-    const DIRECTORY_MODEL_RESOURCEMODEL_SAMPLE = self::DIRECTORY_MODEL_RESOURCEMODEL . DIRECTORY_SEPARATOR . 'Sample';
-    const DIRECTORY_OBSERVER = 'Observer';
-    const DIRECTORY_PLUGIN = 'Plugin';
-    const DIRECTORY_SETUP = 'Setup';
-    const DIRECTORY_TEST_UNIT = 'Test'.DIRECTORY_SEPARATOR.'Unit';
-    const DIRECTORY_UI = 'UI';
-    const DIRECTORY_VIEW = 'view';
+    public const DIRECTORY_API = 'Api';
+    public const DIRECTORY_BLOCK = 'Block';
+    public const DIRECTORY_CONTROLLER = 'Controller';
+    public const DIRECTORY_CONTROLLER_ADMINHTML = self::DIRECTORY_CONTROLLER . DIRECTORY_SEPARATOR . 'Adminhtml';
+    // phpcs:ignore
+    public const DIRECTORY_CONTROLLER_ADMINHTML_SAMPLE = self::DIRECTORY_CONTROLLER_ADMINHTML . DIRECTORY_SEPARATOR . 'Sample';
+    public const DIRECTORY_CONTROLLER_SAMPLE = self::DIRECTORY_CONTROLLER . DIRECTORY_SEPARATOR . 'Sample';
+    public const DIRECTORY_CRON = 'Cron';
+    public const DIRECTORY_ETC = 'etc';
+    public const DIRECTORY_ETC_ADMINHTML = self::DIRECTORY_ETC . DIRECTORY_SEPARATOR . 'adminhtml';
+    public const DIRECTORY_ETC_FRONTEND = self::DIRECTORY_ETC . DIRECTORY_SEPARATOR . 'frontend';
+    public const DIRECTORY_HELPER = 'Helper';
+    public const DIRECTORY_I18N = 'i18n';
+    public const DIRECTORY_MAIL = 'Mail';
+    public const DIRECTORY_MODEL = 'Model';
+    public const DIRECTORY_MODEL_RESOURCEMODEL = self::DIRECTORY_MODEL . DIRECTORY_SEPARATOR . 'ResourceModel';
+    // phpcs:ignore
+    public const DIRECTORY_MODEL_RESOURCEMODEL_SAMPLE = self::DIRECTORY_MODEL_RESOURCEMODEL . DIRECTORY_SEPARATOR . 'Sample';
+    public const DIRECTORY_OBSERVER = 'Observer';
+    public const DIRECTORY_PLUGIN = 'Plugin';
+    public const DIRECTORY_SETUP = 'Setup';
+    public const DIRECTORY_TEST_UNIT = 'Test'.DIRECTORY_SEPARATOR.'Unit';
+    public const DIRECTORY_UI = 'UI';
+    public const DIRECTORY_VIEW = 'view';
 
-    const FILE_COMPOSER = 'composer.json';
-    const FILE_README = 'README.md';
-    const FILE_REGISTRATION = 'registration.php';
-    const FILE_INDEX = 'Index.php';
-    const FILE_COLLECTION = 'Collection.php';
-    const FILE_SAMPLE_RESOURCEMODEL = 'SampleResourceModel.php';
-    const FILE_SAMPLE_MODEL = 'SampleModel.php';
-    const FILE_SAMPLE_TEST = 'SampleTest.php';
-    const FILE_MODULE = 'module.xml';
-    const FILE_ACL = 'acl.xml';
-    const FILE_ROUTES = 'routes.xml';
-    const FILE_MENU = 'menu.xml';
+    public const FILE_COMPOSER = 'composer.json';
+    public const FILE_README = 'README.md';
+    public const FILE_REGISTRATION = 'registration.php';
+    public const FILE_INDEX = 'Index.php';
+    public const FILE_COLLECTION = 'Collection.php';
+    public const FILE_SAMPLE_RESOURCEMODEL = 'SampleResourceModel.php';
+    public const FILE_SAMPLE_MODEL = 'SampleModel.php';
+    public const FILE_SAMPLE_TEST = 'SampleTest.php';
+    public const FILE_MODULE = 'module.xml';
+    public const FILE_ACL = 'acl.xml';
+    public const FILE_ROUTES = 'routes.xml';
+    public const FILE_MENU = 'menu.xml';
 
-    const SCAFFOLDER_TYPE = 'module';
+    public const SCAFFOLDER_TYPE = 'module';
 
-    public function __construct(
-        ScaffolderFileHelper $fileHelper
-    ) {
-        parent::__construct($fileHelper);
-    }
-
-    public function prepareDestinationDirectories()
+    /**
+     * Generates operations to write all needed folders
+     *
+     * @return void
+     */
+    public function prepareDestinationDirectories(): void
     {
         $this->generateDirectoryOperation();
         $this->generateDirectoryOperation(self::DIRECTORY_API);
@@ -74,7 +75,12 @@ class ScaffolderModuleController extends ScaffolderAbstractController
         $this->generateDirectoryOperation(self::DIRECTORY_VIEW);
     }
 
-    public function prepareDestinationFiles()
+    /**
+     * Generates operations to write all needed files
+     *
+     * @return void
+     */
+    public function prepareDestinationFiles(): void
     {
         $this->generateFileOperation(self::FILE_COMPOSER);
         $this->generateFileOperation(self::FILE_README);
@@ -92,11 +98,22 @@ class ScaffolderModuleController extends ScaffolderAbstractController
         $this->generateFileOperation(self::FILE_SAMPLE_TEST, self::DIRECTORY_TEST_UNIT);
     }
 
-    public function getDestinationAppPath(){
+    /**
+     * The subpath from "app" Magento path where to store new extension files
+     *
+     * @return string
+     */
+    public function getDestinationAppPath(): string
+    {
         return 'code' . DIRECTORY_SEPARATOR . $this->vendorName . DIRECTORY_SEPARATOR . $this->extensionName;
     }
 
-    public function getTemplateBasepath()
+    /**
+     * Overrides parent method to specify the right template folder for module creation
+     *
+     * @return string
+     */
+    public function getTemplateBasepath(): string
     {
         $originPath = $this->fileHelper->getModulePath('Codever_Scaffolder');
         $subPaths = [
@@ -107,4 +124,14 @@ class ScaffolderModuleController extends ScaffolderAbstractController
         return implode(DIRECTORY_SEPARATOR, $subPaths);
     }
 
+    /**
+     * Displays a final success message to the user
+     *
+     * @return void
+     */
+    public function success(): void
+    {
+        $destinationFinalPath = $this->getDestinationBasepath();
+        $this->shell->success('Your new module has been successfully created at ' . $destinationFinalPath);
+    }
 }

@@ -9,15 +9,43 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Magento\Framework\Console\Cli;
 
 /**
- * /usr/local/bin/php /var/www/html/./vendor/phpunit/phpunit/phpunit  ./vendor/codever/magento-scaffolder/Test/Unit/Console/Command/ScaffolderTest.php
+ * test suite for Scaffolder Command class
+ *
+ * launch test with command:
+ *
+ * ```
+ * /usr/local/bin/php /var/www/html/./vendor/phpunit/phpunit/phpunit
+ * ./vendor/codever/magento-scaffolder/Test/Unit/Console/Command/ScaffolderTest.php
+ * ```
  */
 class ScaffolderTest extends \PHPUnit\Framework\TestCase
 {
-    private $command;
-    private $testedClass;
-    private $objectManager;
-    private $tester;
+    /**
+     * Magento object manager
+     *
+     * @var ObjectManager
+     */
+    private ObjectManager $objectManager;
 
+    /**
+     * the class to be tested
+     *
+     * @var ScaffolderModuleController
+     */
+    private ScaffolderModuleController $testedClass;
+
+    /**
+     * tester for the Command class
+     *
+     * @var CommandTester
+     */
+    private CommandTester $tester;
+
+    /**
+     * setUp function to initialize tests
+     *
+     * @return void
+     */
     public function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
@@ -26,9 +54,12 @@ class ScaffolderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * tests command in an interactive way
+     *
+     * @return void
      * @see https://symfony.com/doc/4.4/components/console/helpers/questionhelper.html#testing-a-command-that-expects-input
      */
-    public function testCommandExecute()
+    public function testCommandExecute(): void
     {
         $this->tester->setInputs(['0', 'Aaa', 'Bbb', 'no']);
         $this->tester->execute([]);

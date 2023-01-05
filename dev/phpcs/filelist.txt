@@ -1,3 +1,5 @@
 vendor/codever/magento-scaffolder/Console
+vendor/codever/magento-scaffolder/Controller
+vendor/codever/magento-scaffolder/Model
 vendor/codever/magento-scaffolder/Helper
 vendor/codever/magento-scaffolder/Test

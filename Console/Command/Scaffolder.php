@@ -9,18 +9,34 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Codever\Scaffolder\Controller\ScaffolderModuleController;
 use Codever\Scaffolder\Helper\ScaffolderFileHelper;
 
-
 class Scaffolder extends Command
 {
-    const ARGUMENT_TYPE = "type";
-    const TYPE_MODULE = "module";
-    const TYPE_THEME_FRONTEND = "frontend";
-    const TYPE_THEME_ADMINHTML = "adminhtml";
+    public const ARGUMENT_TYPE = "type";
+    public const TYPE_MODULE = "module";
+    public const TYPE_THEME_FRONTEND = "frontend";
+    public const TYPE_THEME_ADMINHTML = "adminhtml";
 
+    /**
+     * Filesystem helper
+     *
+     * @var ScaffolderFileHelper
+     */
+    private ScaffolderFileHelper $fileHelper;
 
-    private $fileHelper;
-    private $shell;
+    /**
+     * Symfony Console decorator
+     *
+     * @var SymfonyStyle
+     */
+    private SymfonyStyle $shell;
 
+    /**
+     * Class constructor
+     *
+     * @param ScaffolderFileHelper $fileHelper
+     * @param string $name
+     * @return void
+     */
     public function __construct(
         ScaffolderFileHelper $fileHelper,
         string $name = null
@@ -29,7 +45,12 @@ class Scaffolder extends Command
         parent::__construct($name);
     }
 
-    protected function configure()
+    /**
+     * Console/Command configuration
+     *
+     * @return void
+     */
+    protected function configure(): void
     {
             $this->setName('codever:scaffolder');
             $this->setDescription('Command line Scaffolder for Magento 2 modules and themes');
@@ -37,7 +58,14 @@ class Scaffolder extends Command
             parent::configure();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * Console/Command entrypoint
+     *
+     * @param  InputInterface $input
+     * @param  OutputInterface $output
+     * @return void
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $this->shell = new SymfonyStyle($input, $output);
         $scaffolderTypes = $this->getScaffoldingTypeList();
@@ -45,11 +73,18 @@ class Scaffolder extends Command
         $className = $scaffolderTypes[$scaffolderType];
         $r = new \ReflectionClass($className);
         $this->scaffolder = $r->newInstanceArgs([$this->fileHelper]);
-        //$this->scaffolder = new ($this->fileHelper);
         $this->scaffolder->execute($this->shell);
     }
 
-    public function getScaffoldingTypeList(){
+    /**
+     * List of Controller available to the user
+     *
+     * Each controller in this list provides a scaffolder for a specific type of extension
+     *
+     * @return array
+     */
+    public function getScaffoldingTypeList()
+    {
         return [
             self::TYPE_MODULE => \Codever\Scaffolder\Controller\ScaffolderModuleController::class,
             self::TYPE_THEME_FRONTEND => \Codever\Scaffolder\Controller\ScaffolderFrontendThemeController::class,

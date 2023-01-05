@@ -16,9 +16,10 @@
     </type>
     <type name="Codever\Scaffolder\Helper\ScaffolderFileHelper">
         <arguments>
+            <argument name="context" xsi:type="object">Magento\Framework\App\Helper\Context</argument>
             <argument name="dir" xsi:type="object">Magento\Framework\Filesystem\DirectoryList</argument>
             <argument name="moduleDir" xsi:type="object">Magento\Framework\Module\Dir</argument>
-            <argument name="context" xsi:type="object">Magento\Framework\App\Helper\Context</argument>
+            <argument name="file" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
         </arguments>
     </type>
 
